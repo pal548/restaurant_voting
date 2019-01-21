@@ -15,7 +15,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = "email", name = "users_unique_email_idx")})
+@Table(name = "users")
 public class User extends AbstractBaseEntity {
 
     @Column(name = "login", nullable = false, unique = true)
