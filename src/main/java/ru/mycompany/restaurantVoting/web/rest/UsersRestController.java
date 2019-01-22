@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.mycompany.restaurantVoting.model.User;
 import ru.mycompany.restaurantVoting.repository.UserRepository;
+import ru.mycompany.restaurantVoting.web.rest.util.RestUtil;
 
 import java.net.URI;
 import java.util.List;
@@ -32,11 +33,7 @@ public class UsersRestController {
     @GetMapping("/{id}")
     public ResponseEntity<User> get(@PathVariable("id") Integer id) {
         Optional<User> optionalUser = repo.findById(id);
-        if (!optionalUser.isPresent()) {
-            return ResponseEntity.notFound().build();
-        } else {
-            return ResponseEntity.ok(optionalUser.get());
-        }
+        return RestUtil.getResposeEntityFromOptional(optionalUser);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
