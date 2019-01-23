@@ -21,5 +21,5 @@ VALUES ('RESTAURANT1', 'ADDRESS1'), -- id = 100002
        ('RESTAURANT2', 'ADDRESS2'); -- id = 100003
 
 INSERT INTO MENU_ITEMS (RESTAURANT_ID, DAY, NAME, PRICE)
-VALUES (100002, '2019-01-22', 'Картошка', 39),
-       (100002, '2019-01-22', 'Котлета', 99);
+VALUES (100002, NOW, 'Картошка', 39),
+       (100002, NOW, 'Котлета', 99);

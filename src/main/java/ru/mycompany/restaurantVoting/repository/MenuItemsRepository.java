@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MenuItemsRepository extends CrudRepository<MenuItem, Integer> {
-    List<MenuItem> findAllByRestaurantId(Integer rest_id);
+    List<MenuItem> findAllByRestaurantIdAndDay(Integer rest_id, LocalDate day);
 
     Optional<MenuItem> findByIdAndRestaurantIdAndDay(Integer id, Integer rest_id, LocalDate day);
 }
