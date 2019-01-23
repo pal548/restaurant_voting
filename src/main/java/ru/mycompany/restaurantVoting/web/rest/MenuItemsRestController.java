@@ -15,6 +15,7 @@ import ru.mycompany.restaurantVoting.web.rest.util.RestUtil;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = MenuItemsRestController.URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -43,7 +44,13 @@ public class MenuItemsRestController {
 
     @PostMapping(value = "/{rest_id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MenuItem> create(@RequestBody MenuItem menuItem, @PathVariable("rest_id") int rest_id) {
-        MenuItem created = menuItemsService.save(menuItem, LocalDate.now(), rest_id);
+        // !!! можно напороться конкретно, если не сбросить id в null... - тогда можно через вызов create() сделать обновление существующей сущности, подставив нужный id
+        // можно сделать через 2 разных метода в сервисе...
+        // в топджава решается как раз так, проверкой checkNew(_entity_) в методе контроллера create()
+        menuItem.setId(null);
+        MenuItem created =
+                menuItemsService.save(menuItem, LocalDate.now(), rest_id)
+                        .orElseThrow(() -> new IllegalStateException("Сохранение MenuItem вернуло null"));
 
         URI uri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(URL + "/{rest_id}/{id}")
@@ -55,7 +62,7 @@ public class MenuItemsRestController {
 
     @PutMapping(value = "/{rest_id}/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> update(@RequestBody MenuItem menuItem, @PathVariable("rest_id") int rest_id, @PathVariable("id") int id) {
-        if (null == menuItemsService.save(menuItem, LocalDate.now(), rest_id)) {
+        if (!menuItemsService.save(menuItem, LocalDate.now(), rest_id).isPresent()) {
             return ResponseEntity.notFound().build();
         } else {
             return ResponseEntity.ok().build();

@@ -24,15 +24,15 @@ public class MenuItemsServiceImpl {
     }
 
     @Transactional
-    public MenuItem save(MenuItem menuItem, LocalDate day, Integer rest_id) {
+    public Optional<MenuItem> save(MenuItem menuItem, LocalDate day, Integer rest_id) {
         if (!menuItem.isNew()) {
             Optional<MenuItem> old = menuItemsRepository.findByIdAndRestaurantIdAndDay(menuItem.getId(), rest_id, day);
             if (!old.isPresent()) {
-                return null;
+                return Optional.empty();
             }
         }
         menuItem.setRestaurant(restaurantsRepository.getOne(rest_id));
         menuItem.setDay(day);
-        return menuItemsRepository.save(menuItem);
+        return Optional.of(menuItemsRepository.save(menuItem));
     }
 }
