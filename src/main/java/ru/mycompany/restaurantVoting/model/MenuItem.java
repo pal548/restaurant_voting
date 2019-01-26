@@ -38,6 +38,14 @@ public class MenuItem extends AbstractBaseEntity {
     @JsonIgnore
     private Restaurant restaurant;
 
+    public MenuItem(Integer id, String name, BigDecimal price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+
+    public MenuItem() {}
+
     public LocalDate getDay() {
         return day;
     }

@@ -65,7 +65,7 @@ public class MenuItemsRestController {
         if (!menuItemsService.save(menuItem, LocalDate.now(), rest_id).isPresent()) {
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }
     }
 
