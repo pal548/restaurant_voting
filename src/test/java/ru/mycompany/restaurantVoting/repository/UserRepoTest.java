@@ -2,8 +2,6 @@ package ru.mycompany.restaurantVoting.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 @SpringJUnitConfig(locations = "classpath:spring/spring-main.xml")
@@ -11,10 +9,10 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 public class UserRepoTest {
 
     @Autowired
-    private UserRepository userRepository;
+    private UsersRepository usersRepository;
 
     @Test
     void testUsersGetAll() {
-        userRepository.findAllWithRoles();
+        usersRepository.findAllWithRoles();
     }
 }

@@ -7,7 +7,7 @@ import ru.mycompany.restaurantVoting.model.User;
 
 import java.util.List;
 
-public interface UserRepository extends CrudRepository<User, Integer> {
+public interface UsersRepository extends CrudRepository<User, Integer> {
     @EntityGraph(attributePaths = {"roles"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT u FROM User u")
     List<User> findAllWithRoles();

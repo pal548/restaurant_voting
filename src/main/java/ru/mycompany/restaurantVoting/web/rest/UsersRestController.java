@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.mycompany.restaurantVoting.model.User;
-import ru.mycompany.restaurantVoting.repository.UserRepository;
+import ru.mycompany.restaurantVoting.repository.UsersRepository;
 import ru.mycompany.restaurantVoting.web.rest.util.RestUtil;
 
 import java.net.URI;
@@ -18,10 +18,10 @@ import java.util.Optional;
 public class UsersRestController {
     public static final String URL = "rest/admin/users";
 
-    private UserRepository repo;
+    private UsersRepository repo;
 
     @Autowired
-    public UsersRestController(UserRepository repo) {
+    public UsersRestController(UsersRepository repo) {
         this.repo = repo;
     }
 
