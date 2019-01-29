@@ -1,6 +1,7 @@
 package ru.mycompany.restaurantVoting.model;
 
 import com.fasterxml.jackson.annotation.*;
+import ru.mycompany.restaurantVoting.View;
 
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 public class MenuItem extends AbstractBaseEntity {
 
     @Column(name = "DAY")
-    @NotNull
+    @NotNull(groups = View.Persist.class)
     @JsonIgnore
     private LocalDate day;
 
@@ -31,7 +32,7 @@ public class MenuItem extends AbstractBaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RESTAURANT_ID", nullable = false)
-    @NotNull
+    @NotNull(groups = View.Persist.class)
     /*@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)*/

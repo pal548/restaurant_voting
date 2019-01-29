@@ -1,21 +1,23 @@
 package ru.mycompany.restaurantVoting.web.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.mycompany.restaurantVoting.View;
 import ru.mycompany.restaurantVoting.model.MenuItem;
 import ru.mycompany.restaurantVoting.repository.MenuItemsRepository;
 import ru.mycompany.restaurantVoting.repository.RestaurantsRepository;
 import ru.mycompany.restaurantVoting.service.MenuItemsServiceImpl;
-import ru.mycompany.restaurantVoting.web.rest.util.RestUtil;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+
+import static ru.mycompany.restaurantVoting.web.rest.util.RestUtil.*;
 
 @RestController
 @RequestMapping(value = MenuItemsRestController.URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,15 +41,12 @@ public class MenuItemsRestController {
 
     @GetMapping("/{rest_id}/{id}")
     public ResponseEntity<MenuItem> get(@PathVariable("rest_id") int rest_id, @PathVariable("id") int id) {
-        return RestUtil.getResposeEntityFromOptional(menuItemsRepository.findByIdAndRestaurantIdAndDay(id, rest_id, LocalDate.now()));
+        return getResponseEntityFromOptional(menuItemsRepository.findByIdAndRestaurantIdAndDay(id, rest_id, LocalDate.now()));
     }
 
     @PostMapping(value = "/{rest_id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MenuItem> create(@RequestBody MenuItem menuItem, @PathVariable("rest_id") int rest_id) {
-        // !!! можно напороться конкретно, если не сбросить id в null... - тогда можно через вызов create() сделать обновление существующей сущности, подставив нужный id
-        // можно сделать через 2 разных метода в сервисе...
-        // в топджава решается как раз так, проверкой checkNew(_entity_) в методе контроллера create()
-        menuItem.setId(null);
+    public ResponseEntity<MenuItem> create(@Validated(View.Rest.class) @RequestBody MenuItem menuItem, @PathVariable("rest_id") int rest_id) {
+        checkNew(menuItem);
         MenuItem created =
                 menuItemsService.save(menuItem, LocalDate.now(), rest_id)
                         .orElseThrow(() -> new IllegalStateException("Сохранение MenuItem вернуло null"));
@@ -61,12 +60,15 @@ public class MenuItemsRestController {
     }
 
     @PutMapping(value = "/{rest_id}/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> update(@RequestBody MenuItem menuItem, @PathVariable("rest_id") int rest_id, @PathVariable("id") int id) {
-        if (!menuItemsService.save(menuItem, LocalDate.now(), rest_id).isPresent()) {
-            return ResponseEntity.notFound().build();
-        } else {
-            return ResponseEntity.noContent().build();
-        }
+    public ResponseEntity<Void> update(@Valid @RequestBody MenuItem menuItem, @PathVariable("rest_id") int rest_id, @PathVariable("id") int id) {
+        assureIdConsistent(menuItem, id);
+        return getResponseEntityNoContentOrNotFound(menuItemsService.save(menuItem, LocalDate.now(), rest_id).isPresent());
+    }
+
+    @DeleteMapping("/{rest_id}/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("rest_id") int rest_id, @PathVariable("id") int id) {
+        return getResponseEntityNoContentOrNotFound(
+                 menuItemsRepository.deleteByIdAndRestaurantIdAndDay(id, rest_id, LocalDate.now()) == 1);
     }
 
 }

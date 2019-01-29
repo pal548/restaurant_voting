@@ -9,9 +9,13 @@ import ru.mycompany.restaurantVoting.model.User;
 import ru.mycompany.restaurantVoting.repository.UsersRepository;
 import ru.mycompany.restaurantVoting.web.rest.util.RestUtil;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+
+import static ru.mycompany.restaurantVoting.web.rest.util.RestUtil.assureIdConsistent;
+import static ru.mycompany.restaurantVoting.web.rest.util.RestUtil.getResponseEntityNoContentOrNotFound;
 
 @RestController
 @RequestMapping(value = UsersRestController.URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,11 +37,11 @@ public class UsersRestController {
     @GetMapping("/{id}")
     public ResponseEntity<User> get(@PathVariable("id") Integer id) {
         Optional<User> optionalUser = repo.findById(id);
-        return RestUtil.getResposeEntityFromOptional(optionalUser);
+        return RestUtil.getResponseEntityFromOptional(optionalUser);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> create(@RequestBody User user) {
+    public ResponseEntity<User> create(@Valid @RequestBody User user) {
         User created = repo.save(user);
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -46,6 +50,14 @@ public class UsersRestController {
 
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
+
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> update(@Valid  @RequestBody User user, @PathVariable("id") int id) {
+        assureIdConsistent(user, id);
+        return getResponseEntityNoContentOrNotFound(repo.save(user) != null);
+    }
+
+
 
 
 }
