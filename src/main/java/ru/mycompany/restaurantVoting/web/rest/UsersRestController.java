@@ -1,6 +1,7 @@
 package ru.mycompany.restaurantVoting.web.rest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -52,12 +53,17 @@ public class UsersRestController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> update(@Valid  @RequestBody User user, @PathVariable("id") int id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void update(@Valid  @RequestBody User user, @PathVariable("id") int id) {
         assureIdConsistent(user, id);
-        return getResponseEntityNoContentOrNotFound(repo.save(user) != null);
+        repo.save(user);
     }
 
-
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id") int id) {
+        repo.deleteById(id);
+    }
 
 
 }
